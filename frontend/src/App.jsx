@@ -27,10 +27,6 @@ export default function App() {
     loadPyodide();
   }, []);
 
-  const handleAnalyze = () => {
-    // Add more here
-  };
-
   // Function to run the user's code
 
   const handleRun = async () => {
@@ -63,6 +59,35 @@ export default function App() {
       setOutput(String(error));
     }
     setIsRunning(false);
+  };
+
+  const handleAnalyze = async () => {
+    setIsAnalyzing(true);
+    setFeedback('');
+
+    try {
+      // Fetch data from backend server
+      const response = await fetch('http://localhost:3001/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }), // Send the current code in the request
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get feedback from the server.');
+      }
+
+      const data = await response.json();
+      setFeedback(data.feedback); 
+
+    } catch (error) {
+      console.error(error);
+      setFeedback('Sorry, something went wrong. Please try again.');
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
