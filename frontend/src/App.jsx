@@ -31,7 +31,7 @@ export default function App() {
     // Add more here
   };
 
-  // Functino to run the user's code
+  // Function to run the user's code
 
   const handleRun = async () => {
     if (!pyodide.current) {
@@ -66,37 +66,34 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900 font-sans">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 font-sans">
       <Header />
-      <main className="flex-grow flex flex-col md:flex-row gap-4 p-4">
-        {/* Left side: Editor, Buttons, and Output */}
-        <div className="flex flex-col w-full md:w-3/5 gap-4">
-          <div className="flex-grow h-3/5">
+      <main className="flex-grow flex flex-col md:flex-row gap-6 p-4 md:p-8 max-w-7xl mx-auto w-full">
+        <div className="flex flex-col w-full md:w-3/5 gap-6">
+          <div className="flex-grow h-64 md:h-[340px] lg:h-[400px]">
             <CodeEditor code={code} setCode={setCode} />
           </div>
-          <div className="flex items-stretch gap-4">
+          <div className="flex gap-4">
             <button
               onClick={handleRun}
               disabled={isRunning || isPyodideLoading}
-              className="w-1/2 bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-500 transition-colors disabled:bg-green-400 disabled:cursor-not-allowed"
+              className="w-1/2 bg-green-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:bg-green-400 transition-colors disabled:bg-green-700 disabled:cursor-not-allowed tracking-wide"
             >
               {isPyodideLoading ? 'Loading Engine...' : (isRunning ? 'Running...' : 'Run Code')}
             </button>
             <button
               onClick={handleAnalyze}
               disabled={isAnalyzing}
-              className="w-1/2 bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-500 transition-colors disabled:bg-indigo-400 disabled:cursor-not-allowed"
+              className="w-1/2 bg-indigo-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:bg-indigo-400 transition-colors disabled:bg-indigo-700 disabled:cursor-not-allowed tracking-wide"
             >
               {isAnalyzing ? 'Analyzing...' : 'Analyze Code'}
             </button>
           </div>
-          <div className="h-2/5">
+          <div className="h-48 md:h-56">
             <OutputPanel output={output} isRunning={isRunning} />
           </div>
         </div>
-
-        {/* Right side: Feedback Panel */}
-        <div className="w-full md:w-2/5">
+        <div className="w-full md:w-2/5 flex flex-col">
           <FeedbackPanel feedback={feedback} isLoading={isAnalyzing} />
         </div>
       </main>

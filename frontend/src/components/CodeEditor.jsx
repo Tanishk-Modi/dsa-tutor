@@ -7,7 +7,7 @@ const CodeEditor = ({ code, setCode }) => {
   }
 
   return (
-    <div className="bg-gray-800 rounded-lg overflow-hidden h-full">
+    <div className="bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden h-full shadow-lg">
       <Editor
         height="100%"
         language="python"
@@ -15,10 +15,12 @@ const CodeEditor = ({ code, setCode }) => {
         value={code}
         onChange={handleEditorChange}
         options={{
-          fontSize: 14,
+          fontSize: 15,
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
           wordWrap: 'on',
+          fontFamily: 'Fira Mono, Menlo, monospace',
+          lineNumbers: 'on',
         }}
       />
     </div>
