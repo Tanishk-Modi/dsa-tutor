@@ -3,12 +3,41 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { GoogleGenerativeAI} = require('@google/generative-ai');
+const http = require('http');
+const { Server } = require('socket.io');
 
 const app = express();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
 app.use(cors());
 app.use(express.json());
+
+// Web Socket Server
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST']
+  }
+});
+
+io.on('connection', (socket) => {
+  console.log(`🔌 User connected: ${socket.id}`);
+
+  socket.on('join-room', (roomId) => {
+    socket.join(roomId);
+    console.log(`User ${socket.id} joined room ${roomId}`)
+  });
+
+  socket.on('code-change', ({ roomId, newCode }) => {
+    socket.to(roomId).emit('code-update', newCode);
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`🔌 User disconnected: ${socket.id}`);
+  });
+
+});
 
 // Main analysis endpoint
 app.post('/analyze', async (req, res) => {
@@ -43,6 +72,6 @@ app.post('/analyze', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
