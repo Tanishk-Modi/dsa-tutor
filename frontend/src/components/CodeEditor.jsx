@@ -1,27 +1,21 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
 
-const CodeEditor = ({ code, setCode }) => {
+const CodeEditor = ({ code, onCodeChange }) => {
+  
   function handleEditorChange(value, event) {
-    setCode(value);
+    onCodeChange(value);
   }
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden h-full shadow-lg">
+    <div className="bg-gray-800 rounded-lg overflow-hidden h-full">
       <Editor
         height="100%"
         language="python"
         theme="vs-dark"
-        value={code}
-        onChange={handleEditorChange}
-        options={{
-          fontSize: 15,
-          minimap: { enabled: false },
-          scrollBeyondLastLine: false,
-          wordWrap: 'on',
-          fontFamily: 'Fira Mono, Menlo, monospace',
-          lineNumbers: 'on',
-        }}
+        value={code} 
+        onChange={handleEditorChange} 
+        options={{  }}
       />
     </div>
   );
