@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+:root {
+  --accent-main: #6366f1; 
+  --accent-main-dark: #312e81; 
+  --panel-bg: #0f172a;
+  --panel-border: #374151;
+}
+
 html, body {
   height: 100%;
   background: #0f172a;
@@ -12,6 +19,57 @@ body {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
+/* Panels and cards */
+.bg-gray-900,
+.bg-gray-800,
+.bg-gray-950 {
+  background-color: var(--panel-bg) !important;
+}
+
+.border-gray-700,
+.border-gray-800 {
+  border-color: var(--panel-border) !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-main);
+  outline-offset: 2px;
+}
+
+a,
+.text-indigo-400,
+.text-indigo-500,
+.text-indigo-600 {
+  color: var(--accent-main) !important;
+}
+
+button,
+.bg-indigo-500,
+.bg-indigo-600 {
+  background: var(--accent-main) !important;
+  color: #f3f4f6 !important;
+  border: 2px solid var(--accent-main);
+}
+
+button:hover,
+.bg-indigo-400:hover,
+.bg-indigo-500:hover {
+  background: var(--accent-main-dark) !important;
+  color: #fff !important;
+}
+
+.rounded-2xl,
+.rounded-xl,
+.rounded-lg {
+  border-radius: 1.25rem !important;
+}
+
+.shadow-lg,
+.shadow-2xl {
+  box-shadow: 0 4px 32px 0 rgba(99, 102, 241, 0.10), 0 1.5px 6px 0 rgba(0,0,0,0.25) !important;
+}
+
+/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
   background: #23272f;

@@ -8,7 +8,7 @@ const OutputPanel = ({ output, isRunning }) => {
         {isRunning ? (
           <span className="text-gray-500">Running...</span>
         ) : (
-          output || <span className="text-gray-600">Click "Run" to see code output.</span>
+          output || <span className="text-gray-600">Click &quot;Run&quot; to see code output.</span>
         )}
       </pre>
     </div>
