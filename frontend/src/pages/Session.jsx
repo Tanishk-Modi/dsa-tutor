@@ -16,6 +16,7 @@ const Session = () => {
   const [feedback, setFeedback] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+  const [shareMsg, setShareMsg] = useState('');
 
   const pyodide = useRef(null);
   const [isPyodideLoading, setIsPyodideLoading] = useState(true);
@@ -23,11 +24,18 @@ const Session = () => {
   const socketRef = useRef(); 
 
   useEffect(() => {
+
     socketRef.current = io(SOCKET_SERVER_URL);
     socketRef.current.emit('join-room', roomId);
+
+    socketRef.current.on('load-document', (document) => {
+      setCode(document); // Load the code received from the server
+    });
+
     socketRef.current.on('code-update', (newCode) => {
       setCode(newCode);
     });
+    
     return () => {
       socketRef.current.disconnect();
     };
@@ -97,9 +105,20 @@ const Session = () => {
     }
   };
 
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setShareMsg('Link Copied!');
+      setTimeout(() => setShareMsg(''), 1800);
+    } catch {
+      setShareMsg('Failed to copy');
+      setTimeout(() => setShareMsg(''), 1800);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 font-sans">
-      <Header />
+      <Header onShare={handleShare} shareMsg={shareMsg} />
       <main className="flex-grow flex flex-col md:flex-row gap-6 p-4 md:p-8 max-w-7xl mx-auto w-full">
         <div className="flex flex-col w-full md:w-3/5 gap-6">
           <div className="flex-grow h-64 md:h-[340px] lg:h-[400px]">

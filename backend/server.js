@@ -11,7 +11,9 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 app.use(cors());
 app.use(express.json());
 
-// Web Socket Server
+const roomDocuments = {};
+
+// Web Socket Server Setup
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -21,22 +23,29 @@ const io = new Server(server, {
   }
 });
 
+// WebSocket Connection 
+
 io.on('connection', (socket) => {
   console.log(`🔌 User connected: ${socket.id}`);
 
   socket.on('join-room', (roomId) => {
     socket.join(roomId);
-    console.log(`User ${socket.id} joined room ${roomId}`)
+    console.log(`User ${socket.id} joined room ${roomId}`);
+
+    if (roomDocuments[roomId]) {
+      socket.emit('load-document', roomDocuments[roomId]);
+    }
   });
 
   socket.on('code-change', ({ roomId, newCode }) => {
+    roomDocuments[roomId] = newCode;
+    
     socket.to(roomId).emit('code-update', newCode);
   });
 
   socket.on('disconnect', () => {
     console.log(`🔌 User disconnected: ${socket.id}`);
   });
-
 });
 
 // Main analysis endpoint
@@ -47,17 +56,21 @@ app.post('/analyze', async (req, res) => {
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const prompt = `
-      You are an expert AI programming tutor for Data Structures and Algorithms.
-      Analyze the user's Python code below.
-      Provide feedback in a friendly, encouraging, and educational tone.
-      Do not simply give the correct code. Instead, guide the student towards the solution by asking leading questions and pointing out conceptual strengths or weaknesses.
-      Identify the algorithm the user is trying to implement. Comment on the code's structure, logic, and potential edge cases. If there's an error, explain the potential cause without directly fixing it.
-      
-      User's Code:
-      \`\`\`python
-      ${code}
-      \`\`\`
-    `;
+    You are an expert AI programming tutor for Data Structures and Algorithms, designed to give concise, targeted feedback. Your goal is to guide, not to solve.
+
+    Analyze the user's Python code below with these strict rules:
+    1.  **Be Extremely Concise:** Keep your entire response under 5 sentences OR a few bullet points. Get straight to the point.
+    2.  **NO CODE BLOCKS:** Do not provide corrected code or long code snippets. You can refer to a variable name or a single line number if necessary, but never write out chunks of code.
+    3.  **Guide with Questions:** Instead of giving the answer, ask a leading question that helps the student find the solution themselves. For example, instead of saying "you need a base case", ask "What happens if your function receives an empty array?"
+    4.  **Focus on One Key Concept:** Identify the single most important area for improvement or the core concept the user is working on.
+
+    Start by identifying the algorithm, then give your targeted feedback.
+
+    User's Code:
+    \`\`\`python
+    ${code}
+    \`\`\`
+  `;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
